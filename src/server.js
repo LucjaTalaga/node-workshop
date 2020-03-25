@@ -1,6 +1,7 @@
 
 const http = require('http');
 const fs = require('fs');
+const querystring = require('querystring');
 const server = http.createServer(handler);
 const message = 'I am so happy to be part of the Node Girls workshop!';
 const types = {
@@ -35,6 +36,19 @@ function handler (request, response) {
         response.writeHead(200, {"Content-Type": "text/html"});
         response.write("It's girls page");
         response.end();
+    }
+    else if(endpoint==='/create-post'){
+        let allTheData = '';
+        request.on('data', function (chunkOfData) {
+            allTheData += chunkOfData;
+        });
+        request.on('end', function () {
+            let convertedData = querystring.parse(allTheData);
+            console.log(convertedData);
+            response.writeHead(301, {"Location": "/"});
+            response.end();
+        });
+
     }
     else {
         fs.readFile(`../public/${endpoint}`, function(error, file) {
